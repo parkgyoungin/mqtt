@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"
+            type = "text/javascript"></script>
+    <script type="text/javascript" LANGUAGE="JavaScript">
+        function publish(){
+            var client = new Paho.MQTT.Client("http://203.237.161.114:1883", "gghotted12760822");
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+            client.connect({onSuccess:onConnect});
+            //var message = new Messaging.Message("i am gghotted");
+            //message.destinationName = "/seoul/yuokok";
+            //message.qos = 0;
+            //client.send(message);
+
+            var content = document.getElementById("content").value;
+            var ip = document.getElementById("ip").value;
+            document.getElementById("result").innerHTML = ip+"로"+" "+content;
+        }
+
+        function onConnect() {
+          // Once a connection has been made, make a subscription and send a message.
+          console.log("onConnect");
+          client.subscribe("World");
+          message = new Paho.MQTT.Message("Hello");
+          message.destinationName = "World";
+          client.send(message);
+        }
+
+        // called when the client loses its connection
+        function onConnectionLost(responseObject) {
+          if (responseObject.errorCode !== 0) {
+            console.log("onConnectionLost:"+responseObject.errorMessage);
+          }
+        }
+
+        // called when a message arrives
+        function onMessageArrived(message) {
+          console.log("onMessageArrived:"+message.payloadString);
+        }
+    </script>
+</head>
+<body>
+    <p id="result">
+
+    </p>
+    <label for="ip">IP</label>
+    <input type="text" id="ip"><br>
+    <label for="content">내용</label>
+    <input type="text" id="content"><br>
+    <button onclick="publish()">publish</button><br>
+
+</body>
+</html>
